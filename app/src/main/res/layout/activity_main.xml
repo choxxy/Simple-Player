@@ -4,18 +4,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".ui.MainActivity">
 
     <fragment
-        android:id="@+id/fragment"
-        android:name="com.example.simpleplayer.MainFragment"
+        android:id="@+id/list_fragment"
+        android:name="com.example.simpleplayer.ui.SongFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toTopOf="@+id/player_fragment"/>
 
+    <fragment
+        android:id="@+id/player_fragment"
+        android:name="com.example.simpleplayer.PlayerFragment"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/list_fragment"
+        />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

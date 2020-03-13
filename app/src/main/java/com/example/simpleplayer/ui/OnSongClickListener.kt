@@ -1,4 +1,4 @@
-package com.example.simpleplayer
+package com.example.simpleplayer.ui
 
 import android.net.Uri
 

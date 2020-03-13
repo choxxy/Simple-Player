@@ -1,4 +1,4 @@
-package com.example.simpleplayer
+package com.example.simpleplayer.ui
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -14,10 +14,12 @@ import androidx.loader.app.LoaderManager
 import androidx.loader.content.CursorLoader
 import androidx.loader.content.Loader
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.fragment_main.*
+import com.example.simpleplayer.MusicManager
+import com.example.simpleplayer.R
+import kotlinx.android.synthetic.main.fragment_song.*
 
 
-class MainFragment : Fragment(R.layout.fragment_main), LoaderManager.LoaderCallbacks<Cursor>,
+class SongFragment : Fragment(R.layout.fragment_song), LoaderManager.LoaderCallbacks<Cursor>,
     OnSongClickListener {
 
     private val PERMISSIONS_REQUEST_READ_STORAGE: Int = 1200
@@ -55,7 +57,7 @@ class MainFragment : Fragment(R.layout.fragment_main), LoaderManager.LoaderCallb
 
             }
         } else {
-            LoaderManager.getInstance(this).initLoader(0, null, this)
+            //LoaderManager.getInstance(this).initLoader(0, null, this)
         }
 
     }
@@ -67,7 +69,7 @@ class MainFragment : Fragment(R.layout.fragment_main), LoaderManager.LoaderCallb
         when (requestCode) {
             PERMISSIONS_REQUEST_READ_STORAGE -> {
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    LoaderManager.getInstance(this).initLoader(0, null, this)
+                   // LoaderManager.getInstance(this).initLoader(0, null, this)
                 }
                 return
             }
@@ -80,14 +82,18 @@ class MainFragment : Fragment(R.layout.fragment_main), LoaderManager.LoaderCallb
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mAdapter = AudioListAdapter(view.context, this)
+        mAdapter =
+            AudioListAdapter(view.context, this)
 
         with(list) {
             adapter = mAdapter
             list.layoutManager = LinearLayoutManager(view.context)
         }
 
-        musicManager = MusicManager(requireContext(), player_control_view)
+//        musicManager = MusicManager(
+//            requireContext(),
+//            player_control_view
+//        )
     }
 
     override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor> {

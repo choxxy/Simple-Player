@@ -1,7 +1,8 @@
-package com.example.simpleplayer
+package com.example.simpleplayer.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.example.simpleplayer.R
 
 class MainActivity : AppCompatActivity() {
 

@@ -1,4 +1,4 @@
-package com.example.simpleplayer
+package com.example.simpleplayer.ui
 
 import android.content.ContentUris
 import android.content.Context
@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.simpleplayer.R
 import com.squareup.picasso.Picasso
 
 
@@ -43,8 +44,7 @@ class AudioListAdapter(private val context: Context, private val listener: OnSon
             val title =
                 dataCursor!!.getString(dataCursor!!.getColumnIndex(MediaStore.Audio.Media.TITLE))
             holder.title.text = title
-            val artist =
-                dataCursor!!.getString(dataCursor!!.getColumnIndex(MediaStore.Audio.Media.ARTIST))
+            val artist = dataCursor!!.getString(dataCursor!!.getColumnIndex(MediaStore.Audio.Media.ARTIST))
             holder.artist.text = artist
             val albumId =
                 dataCursor!!.getLong(dataCursor!!.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID))
