@@ -8,8 +8,9 @@ import android.provider.MediaStore
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.simpleplayer.data.Song
+import javax.inject.Inject
 
-class SongRepositoryImpl(private val context: Context): SongRepository{
+class SongRepositoryImpl @Inject constructor(val context: Context): SongRepository{
 
     var selection = MediaStore.Audio.Media.IS_MUSIC + " != 0"
 

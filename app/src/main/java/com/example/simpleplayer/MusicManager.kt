@@ -11,13 +11,14 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.ui.PlayerControlView
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class MusicManager(private val context: Context, private val controlView: PlayerControlView) {
-
+@Singleton
+class MusicManager @Inject constructor(private val context: Context, private val controlView: PlayerControlView) {
 
     private var oldSongUri: Uri? = null
     private var player: SimpleExoPlayer? = null
-
 
     private fun initializePlayer() {
         val audioAttributes =

@@ -18,7 +18,7 @@
 
     <fragment
         android:id="@+id/player_fragment"
-        android:name="com.example.simpleplayer.PlayerFragment"
+        android:name="com.example.simpleplayer.ui.PlayerFragment"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"

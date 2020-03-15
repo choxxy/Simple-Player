@@ -13,5 +13,6 @@ class SimplePlayer: Application(){
     }
 }
 
+// Context  extension property
 val Context.appComponent: AppComponent
     get() = (this.applicationContext as SimplePlayer).appComponent

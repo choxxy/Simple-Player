@@ -9,5 +9,4 @@ import dagger.Module
 abstract class DataModule {
     @Binds
     abstract fun providesSongRepository(songRepository: SongRepositoryImpl): SongRepository
-
 }

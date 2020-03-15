@@ -12,13 +12,13 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.simpleplayer.R
+import com.example.simpleplayer.data.Song
 import com.squareup.picasso.Picasso
-
 
 class AudioListAdapter(private val context: Context, private val listener: OnSongClickListener) :
     RecyclerView.Adapter<AudioListAdapter.ViewHolder>() {
 
-    var dataCursor: Cursor? = null
+    private var songList: List<Song>? = null
 
     class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         var title = v.findViewById<View>(R.id.song_title) as TextView
@@ -32,36 +32,24 @@ class AudioListAdapter(private val context: Context, private val listener: OnSon
         return ViewHolder(cardview)
     }
 
-    fun setData(cursor: Cursor?) {
-        dataCursor = cursor
+    fun setData(songs: List<Song>) {
+        songList = songs
         notifyDataSetChanged()
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        if (dataCursor!!.moveToPosition(position)) {
-
-            val title =
-                dataCursor!!.getString(dataCursor!!.getColumnIndex(MediaStore.Audio.Media.TITLE))
-            holder.title.text = title
-            val artist = dataCursor!!.getString(dataCursor!!.getColumnIndex(MediaStore.Audio.Media.ARTIST))
-            holder.artist.text = artist
-            val albumId =
-                dataCursor!!.getLong(dataCursor!!.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID))
-            val sArtworkUri = Uri.parse("content://media/external/audio/albumart")
-            val albumArtUri = ContentUris.withAppendedId(sArtworkUri, albumId!!)
-
+        songList?.get(position)?.let {song->
+            holder.title.text = song.title
+            holder.artist.text = song.artist
             Picasso.get()
-                .load(albumArtUri)
+                .load(song.artUri)
                 .placeholder(R.drawable.ic_music_note_vector)
                 .error(R.drawable.ic_music_note_vector)
                 .into(holder.image)
 
-            val songId =
-                dataCursor!!.getLong(dataCursor!!.getColumnIndexOrThrow(MediaStore.Audio.Media._ID))
-
             val contentUri: Uri =
-                ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, songId!!)
+                ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, song.id)
 
             holder.itemView.setOnClickListener {
                 listener.onClick(contentUri)
@@ -70,7 +58,7 @@ class AudioListAdapter(private val context: Context, private val listener: OnSon
     }
 
     override fun getItemCount(): Int {
-        return dataCursor?.count ?: -1
+        return songList?.size?: -1
     }
 
 }
