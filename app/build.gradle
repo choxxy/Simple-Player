@@ -43,6 +43,7 @@ dependencies {
 
     implementation 'com.google.android.exoplayer:exoplayer-core:2.11.3'
     implementation 'com.google.android.exoplayer:exoplayer-ui:2.11.3'
+    implementation 'com.google.android.exoplayer:extension-mediasession:2.11.3'
 
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
 
@@ -50,5 +51,5 @@ dependencies {
 
     implementation 'com.google.dagger:dagger:2.25.4'
     kapt 'com.google.dagger:dagger-compiler:2.25.4'
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
 }

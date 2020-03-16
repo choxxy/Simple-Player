@@ -1,111 +1,93 @@
 package com.example.simpleplayer
 
+import android.content.ComponentName
 import android.content.Context
-import android.net.Uri
-import com.google.android.exoplayer2.C
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.audio.AudioAttributes
-import com.google.android.exoplayer2.source.MediaSource
-import com.google.android.exoplayer2.source.ProgressiveMediaSource
-import com.google.android.exoplayer2.ui.PlayerControlView
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import com.google.android.exoplayer2.util.Util
+import android.support.v4.media.MediaBrowserCompat
+import android.support.v4.media.MediaMetadataCompat
+import android.support.v4.media.session.MediaControllerCompat
+import android.support.v4.media.session.MediaSessionCompat
+import android.support.v4.media.session.PlaybackStateCompat
+import androidx.lifecycle.MutableLiveData
 import javax.inject.Inject
 import javax.inject.Singleton
 
+
 @Singleton
-class MusicManager @Inject constructor(private val context: Context, private val controlView: PlayerControlView) {
+class MusicManager @Inject constructor(private val context: Context) {
 
-    private var oldSongUri: Uri? = null
-    private var player: SimpleExoPlayer? = null
+    val isConnected = MutableLiveData<Boolean>()
+        .apply { postValue(false) }
 
-    private fun initializePlayer() {
-        val audioAttributes =
-            AudioAttributes.Builder()
-                .setUsage(C.USAGE_MEDIA)
-                .setContentType(C.CONTENT_TYPE_MUSIC)
-                .build()
 
-        player = SimpleExoPlayer.Builder(context).build().apply {
-            //setHandleWakeLock(true)
-            setHandleAudioBecomingNoisy(true)
-            setAudioAttributes(audioAttributes, true)
-            addListener(playerEventListener)
+    val rootMediaId: String get() = mediaBrowser.root
+
+    val playbackState = MutableLiveData<PlaybackStateCompat>()
+    val nowPlaying = MutableLiveData<MediaMetadataCompat>()
+    val transportControls: MediaControllerCompat.TransportControls
+        get() = mediaController.transportControls
+
+    private val mediaBrowserConnectionCallback = MediaBrowserConnectionCallback(context)
+    private val mediaBrowser = MediaBrowserCompat(
+        context,
+        ComponentName(context, SimplePlayerService::class.java),
+        mediaBrowserConnectionCallback, null
+    ).apply { connect() }
+    private lateinit var mediaController: MediaControllerCompat
+
+    fun subscribe(parentId: String, callback: MediaBrowserCompat.SubscriptionCallback) {
+        mediaBrowser.subscribe(parentId, callback)
+    }
+
+    fun unsubscribe(parentId: String, callback: MediaBrowserCompat.SubscriptionCallback) {
+        mediaBrowser.unsubscribe(parentId, callback)
+    }
+
+    private inner class MediaBrowserConnectionCallback(private val context: Context) :
+        MediaBrowserCompat.ConnectionCallback() {
+        /**
+         * Invoked after [MediaBrowserCompat.connect] when the request has successfully
+         * completed.
+         */
+        override fun onConnected() {
+            // Get a MediaController for the MediaSession.
+            mediaController = MediaControllerCompat(context, mediaBrowser.sessionToken).apply {
+                registerCallback(MediaControllerCallback())
+            }
+
+            isConnected.postValue(true)
         }
 
-        controlView.player = player
+        /**
+         * Invoked when the client is disconnected from the media browser.
+         */
+        override fun onConnectionSuspended() {
+            isConnected.postValue(false)
+        }
 
-    }
-
-    private val playerEventListener = object : Player.EventListener {
-        override fun onPlayerStateChanged(
-            playWhenReady: Boolean,
-            playbackState: Int
-        ) {
-
+        /**
+         * Invoked when the connection to the media browser failed.
+         */
+        override fun onConnectionFailed() {
+            isConnected.postValue(false)
         }
     }
 
-    fun release() {
-        player?.stop()
-        player?.release()
-    }
+    private inner class MediaControllerCallback : MediaControllerCompat.Callback() {
 
-    fun play(uri: Uri) {
-        if (player == null)
-            initializePlayer()
-
-        if (uri != oldSongUri) {
-            if (player!!.isPlaying)
-                pause()
-            val mediaSource = buildMediaSource(uri)
-            player!!.prepare(mediaSource)
-            play()
+        override fun onPlaybackStateChanged(state: PlaybackStateCompat?) {
+            playbackState.postValue(state )
         }
-        oldSongUri = uri
-    }
 
-    private fun play() {
-        player?.playWhenReady = true
-    }
-
-    private fun pause() {
-        player?.playWhenReady = false
-    }
-
-    private fun buildMediaSource(uri: Uri): MediaSource {
-
-        return ProgressiveMediaSource.Factory(
-            DefaultDataSourceFactory(
-                context,
-                Util.getUserAgent(context, context.getString(R.string.app_name))
-            )
-        ).createMediaSource(uri)
-
-    }
-
-    private fun buildMediaSource(): MediaSource? {
-        /*long[] ids = MusicUtils.getSongListForPlaylist(this, playlistId);
-
-        MediaSource[] mediaSources = new MediaSource[ids.length];
-        for (int i = 0; i < mediaSources.length; i++) {
-            Uri songUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, ids[i]);
-            mediaSources[i] = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(songUri);
+        override fun onMetadataChanged(metadata: MediaMetadataCompat?) {
+            nowPlaying.postValue(metadata)
         }
-        MediaSource mediaSource = mediaSources.length == 1 ? mediaSources[0]
-                : new ConcatenatingMediaSource(mediaSources);
-        return mediaSource;*/
-        /*long[] ids = MusicUtils.getSongListForPlaylist(this, playlistId);
 
-        MediaSource[] mediaSources = new MediaSource[ids.length];
-        for (int i = 0; i < mediaSources.length; i++) {
-            Uri songUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, ids[i]);
-            mediaSources[i] = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(songUri);
+        override fun onQueueChanged(queue: MutableList<MediaSessionCompat.QueueItem>?) {
         }
-        MediaSource mediaSource = mediaSources.length == 1 ? mediaSources[0]
-                : new ConcatenatingMediaSource(mediaSources);
-        return mediaSource;*/
-        return null
+
+        override fun onSessionDestroyed() {
+            mediaBrowserConnectionCallback.onConnectionSuspended()
+        }
     }
+
 }
