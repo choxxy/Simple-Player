@@ -30,9 +30,10 @@ class SongRepository  constructor(private val context: Context) {
 
     fun getSongs(): LiveData<List<Song>>{
 
-        val musicLiveData = MutableLiveData<List<Song>>()
-        val musicList =  mutableListOf<Song>()
+        val songsLiveData = MutableLiveData<List<Song>>()
+        val songList =  mutableListOf<Song>()
 
+        //Get songs from provider
         context.contentResolver.query(
             MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
             projection,
@@ -49,7 +50,7 @@ class SongRepository  constructor(private val context: Context) {
                     val albumId = cursor.getLong(getColumnIndex(cursor,MediaStore.Audio.Media.ALBUM_ID))
                     val sArtworkUri = Uri.parse("content://media/external/audio/albumart")
                     val albumArtUri = ContentUris.withAppendedId(sArtworkUri, albumId)
-                    musicList.add(
+                    songList.add(
                         Song(
                             id = id,
                             title = title,
@@ -62,8 +63,8 @@ class SongRepository  constructor(private val context: Context) {
             }
         }
 
-        return musicLiveData.apply {
-            value = musicList
+        return songsLiveData.apply {
+            value = songList
         }
 
     }
