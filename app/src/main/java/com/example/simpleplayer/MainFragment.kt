@@ -11,7 +11,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.loader.app.LoaderManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.simpleplayer.data.repos.SongRepository
 import kotlinx.android.synthetic.main.fragment_main.*

@@ -43,12 +43,18 @@ class SongRepository  constructor(private val context: Context) {
         ).use {cursor ->
             if (cursor?.moveToFirst() == true) {
                 do {
-                    val id = cursor.getLong(getColumnIndex(cursor,MediaStore.Audio.Media._ID))
-                    val title = cursor.getString(getColumnIndex(cursor,MediaStore.Audio.Media.TITLE))
-                    val artist = cursor.getString(getColumnIndex(cursor,MediaStore.Audio.Media.ARTIST))
-                    val album = cursor.getString(getColumnIndex(cursor,MediaStore.Audio.Media.ALBUM))
-                    val albumId = cursor.getLong(getColumnIndex(cursor,MediaStore.Audio.Media.ALBUM_ID))
-                    val sArtworkUri = Uri.parse("content://media/external/audio/albumart")
+                    val id =
+                        cursor.getLong(getColumnIndex(cursor,MediaStore.Audio.Media._ID))
+                    val title =
+                        cursor.getString(getColumnIndex(cursor,MediaStore.Audio.Media.TITLE))
+                    val artist =
+                        cursor.getString(getColumnIndex(cursor,MediaStore.Audio.Media.ARTIST))
+                    val album =
+                        cursor.getString(getColumnIndex(cursor,MediaStore.Audio.Media.ALBUM))
+                    val albumId =
+                        cursor.getLong(getColumnIndex(cursor,MediaStore.Audio.Media.ALBUM_ID))
+                    val sArtworkUri =
+                        Uri.parse("content://media/external/audio/albumart")
                     val albumArtUri = ContentUris.withAppendedId(sArtworkUri, albumId)
                     songList.add(
                         Song(
