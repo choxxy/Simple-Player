@@ -8,7 +8,12 @@ import android.provider.MediaStore
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.simpleplayer.data.Song
+import org.koin.android.ext.koin.androidApplication
+import org.koin.dsl.module
 
+val songRepositoryModule =  module {
+    single { SongRepository (androidApplication()) }
+}
 
 class SongRepository  constructor(private val context: Context) {
 
@@ -73,15 +78,5 @@ class SongRepository  constructor(private val context: Context) {
             value = songList
         }
 
-    }
-
-    companion object{
-        private var instance: SongRepository? = null
-
-        fun getInstance(context: Context) =
-            instance ?: synchronized(this) {
-                instance ?: SongRepository(context)
-                    .also { instance = it }
-            }
     }
 }

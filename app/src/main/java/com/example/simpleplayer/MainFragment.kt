@@ -14,9 +14,12 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.simpleplayer.data.repos.SongRepository
 import kotlinx.android.synthetic.main.fragment_main.*
+import org.koin.android.ext.android.inject
 
 
 class MainFragment : Fragment(R.layout.fragment_main), OnSongClickListener {
+
+    val songRepository: SongRepository by inject()
 
     private val PERMISSIONS_REQUEST_READ_STORAGE: Int = 1200
 
@@ -95,7 +98,7 @@ class MainFragment : Fragment(R.layout.fragment_main), OnSongClickListener {
     }
 
     private fun loadSongs() {
-        SongRepository.getInstance(requireContext()).getSongs()
+        songRepository.getSongs()
             .observe(viewLifecycleOwner, Observer { songs ->
                 mAdapter.setData(songs)
             })
