@@ -1,11 +1,12 @@
 package com.example.simpleplayer.data
 
-import android.net.Uri
+import android.graphics.Bitmap
 
 data class Song(
     val id: Long,
     val title: String,
-    val artUri: Uri,
+    val albumArt: Bitmap?,
     val album: String,
-    val artist: String
+    val artist: String,
+    val duration: Long
 )

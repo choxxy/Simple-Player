@@ -5,23 +5,28 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.simpleplayer.OnSongClickListener
 import com.example.simpleplayer.R
 import com.example.simpleplayer.data.Song
-import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.item_song.view.*
 
 class AudioListAdapter(private val context: Context, private val listener: OnSongClickListener) :
     RecyclerView.Adapter<AudioListAdapter.ViewHolder>() {
 
     private var songList: List<Song>? = null
 
-    class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-        var title = v.findViewById<View>(R.id.song_title) as TextView
-        var image = v.findViewById<View>(R.id.song_note_image) as ImageView
-        var artist = v.findViewById<View>(R.id.song_artist) as TextView
+    class ViewHolder(val v: View) : RecyclerView.ViewHolder(v) {
+
+        fun bind(song: Song){
+            v.song_title.text = song.title
+
+            if(song.albumArt == null)
+                v.song_note_image.setImageResource(R.drawable.ic_music_note_vector)
+            else
+                v.song_note_image.setImageBitmap(song.albumArt)
+            v.song_artist.text = song.artist
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -38,13 +43,8 @@ class AudioListAdapter(private val context: Context, private val listener: OnSon
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         songList?.get(position)?.let {song->
-            holder.title.text = song.title
-            holder.artist.text = song.artist
-            Picasso.get()
-                .load(song.artUri)
-                .placeholder(R.drawable.ic_music_note_vector)
-                .error(R.drawable.ic_music_note_vector)
-                .into(holder.image)
+
+            holder.bind(song)
 
             val contentUri: Uri =
                 ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, song.id)
